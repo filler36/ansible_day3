@@ -1,0 +1,12 @@
+---
+# handlers file for postgresql
+
+- name: initdb
+  become: yes
+  shell: postgresql-setup initdb
+
+- name: restart_postgresql
+  become: yes
+  systemd:
+    name: postgresql
+    state: restarted

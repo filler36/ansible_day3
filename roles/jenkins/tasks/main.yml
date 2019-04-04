@@ -1,0 +1,37 @@
+---
+# tasks file for jenkins
+
+- name: Create /opt/jenkins/ directory
+  file:
+    path: /opt/jenkins/
+    state: directory
+    mode: 0755
+    owner: jenkins
+    group: jenkins
+
+- name: Copy jenkins.war
+  become: yes
+  become_user: jenkins
+  copy:
+    src: jenkins.war
+    dest: /opt/jenkins/
+
+- name: Copy jenkins.service
+  become: yes
+  copy:
+    src: jenkins.service
+    dest: /etc/systemd/system/
+
+- name: just force systemd to reread configs (2.4 and above)
+  become: yes
+  systemd:
+    daemon_reload: yes
+
+- name: Make sure a service is running
+  systemd:
+    state: started
+    name: jenkins
+
+#java -Duser.home=/opt/jenkins -Xms1000m -Xmx1200m -jar /<path>/jenkins.war
+
+#openssl passwd -salt <salt> -1 <plaintext>

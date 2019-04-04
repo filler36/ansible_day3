@@ -1,0 +1,13 @@
+[Unit]
+Description=Jenkins Daemon
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/java -Duser.home=/opt/jenkins -Xms1000m -Xmx1500m -jar /opt/jenkins/jenkins.war
+User=jenkins
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+

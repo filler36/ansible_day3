@@ -1,0 +1,7 @@
+---
+# tasks file for java
+
+- name: INSTALL JAVA
+  yum:
+    name: "java-{{ jdk_version }}-openjdk"
+    state: present

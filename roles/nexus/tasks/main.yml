@@ -1,0 +1,70 @@
+---
+# tasks file for nexus
+
+- name: Copy nexus.service
+  become: yes
+  copy:
+    src: nexus.service
+    dest: /etc/systemd/system/
+    owner: root
+    group: root
+    mode: 0644
+  notify: daemon-reload
+- meta: flush_handlers
+
+- name: Download Nexus (local)
+  become: yes
+  copy:
+    src: latest-unix.tar.gz
+    dest: /home/nexus/
+
+#- name: Download Nexus (internet)
+#  get_url:
+#    url: https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+#    dest: /home/nexus
+#    mode: 0666
+
+- name: check /opt/nexus
+  stat:
+    path: /opt/nexus
+  register: result
+
+
+
+- name: Unarchive nexus
+  become: yes
+  unarchive:
+    src: /home/nexus/latest-unix.tar.gz
+    dest: /opt/
+    remote_src: yes
+    owner: nexus
+    group: nexus
+  when: result.stat.exists == False
+  notify: rename-nexus
+- meta: flush_handlers
+
+- name: Chown nexus dir
+  become: yes
+  file:
+    path: /opt/nexus/
+    owner: nexus
+    group: nexus
+    recurse: yes
+
+- name: Chown sonatype-work dir
+  become: yes
+  file:
+    path: /opt/sonatype-work/
+    owner: nexus
+    group: nexus
+    recurse: yes
+
+- name: Enable and start nexus
+  become: yes
+  systemd:
+    enabled: yes
+    state: started
+    name: nexus
+
+
+#openssl passwd -salt <salt> -1 <plaintext>

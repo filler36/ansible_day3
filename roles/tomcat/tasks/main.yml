@@ -1,0 +1,21 @@
+---
+# tasks file for tomcat
+
+- name: Install tomcat
+  become: yes
+  yum:
+    name:
+    - tomcat
+    - tomcat-webapps
+    - tomcat-admin-webapps 
+    state: present
+
+- name: Start tomcat
+  become: yes
+  systemd:
+    name: tomcat
+    state: started
+
+
+
+#curl -v --user jenkins:jenkins --upload-file $WORKSPACE/day7_build$BUILD_NUMBER.tar.gz http://192.168.56.112:8081/repository/TEST_FIL/

@@ -1,0 +1,42 @@
+---
+# tasks file for sonar
+
+- include_tasks: postgresql.yml
+
+- name: Install unzip
+  become: yes
+  yum:
+    name: unzip
+    state: present
+
+- name: Download sonarqube
+  become: yes
+  get_url:
+    url: https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-6.7.6.zip
+    dest: /home/sonar
+    mode: 0666
+
+- name: Unarchive a file that is already on the remote machine
+  become: yes
+  unarchive:
+    src: /home/sonar/sonarqube-6.7.6.zip
+    dest: /opt/
+    remote_src: yes
+    owner: sonar
+    group: sonar
+  args:
+    creates: /opt/sonarqube-6.7.6/bin/linux-x86-64/sonar.sh
+
+- name: Copy sonar.properties
+  become: yes
+  copy:
+    src: sonar.properties
+    dest: /opt/sonarqube-6.7.6/conf/
+
+- name: Start sonar
+  become: yes
+  become_user: sonar
+  shell: /opt/sonarqube-6.7.6/bin/linux-x86-64/sonar.sh start
+  failed_when: no
+  changed_when: no
+ 

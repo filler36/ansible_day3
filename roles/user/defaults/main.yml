@@ -1,0 +1,8 @@
+---
+# defaults file for test
+
+devops_username: devops
+jenkins_username: jenkins
+nexus_username: nexus
+sonar_username: sonar
+tomcat_username: tomcat

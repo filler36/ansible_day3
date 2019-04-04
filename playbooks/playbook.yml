@@ -1,0 +1,32 @@
+- hosts: all
+  name: MAIN PLAY
+  become: yes
+  roles:
+  - { role: user, username: "{{ devops_username }}" }
+  - java
+  - nginx
+
+- hosts: jenkins
+  name: JENKINS PLAY
+  become: yes
+  roles:
+  - { role: user, username: "{{ jenkins_username }}" }
+  - jenkins
+  - nginx
+
+- hosts: nexus
+  name: NEXUS PLAY
+  roles:
+  - { role: user, username: "{{ nexus_username }}" }
+  - nexus
+
+- hosts: sonar
+  name: SONAR PLAY
+  roles:
+  - { role: user, username: "{{ sonar_username }}" }
+  - sonar
+
+- hosts: tomcat
+  name: TOMCAT PLAY
+  roles:
+  - tomcat

@@ -1,0 +1,25 @@
+---
+# vars file for user
+
+users:
+  devops:
+    uid: 1110
+    gid: 1110
+    password: $1$xxx$8x.Wv.ncJT3VkVw.YnXpE0
+    privileges: "devops ALL=(ALL) NOPASSWD: ALL"
+  jenkins:
+    uid: 1111
+    gid: 1111
+    password: $1$xxx$tGkhOO/GhZ9iP0mC8uwZi.
+    privileges: "jenkins ALL=(ALL) NOPASSWD: ALL"
+  nexus:
+    uid: 1112
+    gid: 1112
+    password: $1$xxx$yQoNftFw19asqz3J3neMJ.
+  sonar:
+    uid: 1113
+    gid: 1113
+    password: $1$xxx$ghwhjJYMavU96AULevr5u/
+  tomcat:
+    uid: 1114
+    gid: 1114

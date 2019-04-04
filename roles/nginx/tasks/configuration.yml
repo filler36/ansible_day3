@@ -1,0 +1,9 @@
+- name: Copy nginx configuration
+  copy:
+    src: "{{ nginx_config }}"
+    dest: /etc/nginx/nginx.conf
+
+- name: Start NGiNX
+  service:
+    name: nginx
+    state: started
