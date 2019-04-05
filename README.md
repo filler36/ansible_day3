@@ -54,8 +54,8 @@
 **TO RETRIEVE LOCAL FACTS, ENTER THE COMMAND BELOW:**
   ansible-playbook -i inventory -u vagrant playbooks/playbook.yml --tags=never
 
-**TO RETRIEVE LOCAL FACT ABOUT BUILD NUMBER OF DEPLOYED ARTIFACT, ENTER THE COMMAND BELOW:**
-  ansible-playbook -i inventory -u vagrant playbooks/playbook.yml --tags=build
+**TO RETRIEVE LOCAL FACT ABOUT CURRENTLY DEPLOYED ARTIFACT, ENTER THE COMMAND BELOW:**
+  ansible-playbook -i inventory -u vagrant playbooks/playbook.yml --tags=buildnumber
 
 **LIST OF SERVERS:**  
 jenkins 192.168.56.110  
