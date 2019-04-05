@@ -1,0 +1,11 @@
+---
+# tasks file for common
+
+- name: retrieve local facts
+  debug: msg={{ ansible_local }}
+  tags: never
+
+- name: create custom facts directory
+  file:
+    path: "/etc/ansible/facts.d"
+    state: "directory"

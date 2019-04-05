@@ -1,5 +1,5 @@
 ---
-# defaults file for test
+# defaults file for user
 
 devops_username: devops
 jenkins_username: jenkins

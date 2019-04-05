@@ -2,6 +2,7 @@
   name: MAIN PLAY
   become: yes
   roles:
+  - common
   - { role: user, username: "{{ devops_username }}" }
   - java
   - nginx
@@ -18,7 +19,7 @@
   name: NEXUS PLAY
   roles:
   - { role: user, username: "{{ nexus_username }}" }
-  - nexus
+  - { role: nexus, username: "{{ nexus_username }}" }
 
 - hosts: sonar
   name: SONAR PLAY

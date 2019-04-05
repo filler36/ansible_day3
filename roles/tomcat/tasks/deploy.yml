@@ -1,0 +1,29 @@
+- name: Download artifact
+  become: yes
+  get_url:
+    url: http://nexus-ci.playpit.by/repository/MNT-pipeline-training/fchkhaidze/pipeline-fchkhaidze/{{ build }}/pipeline-fchkhaidze-{{ build }}.tar.gz
+    dest: /tmp/
+
+- name: build number of artifact fact
+  become: yes
+  shell: |
+   printf "[section]\nFilip_App_build=" > /etc/ansible/facts.d/filip_app.fact
+   echo "{{ build }}" >> /etc/ansible/facts.d/filip_app.fact
+   sed -i ':a;2N;s/\n//g' /etc/ansible/facts.d/filip_app.fact
+
+- name: Unarchive artifact
+  become: yes
+  unarchive:
+    src: /tmp/pipeline-fchkhaidze-{{ build }}.tar.gz
+    dest: /opt/
+    remote_src: yes
+
+- name: Deploy to tomcat
+  become: yes
+  shell: |
+   curl -T '/opt/helloworld-ws/target/helloworld-ws.war' 'http://admin:admin@192.168.56.113:8080/manager/text/deploy?path=/{{ branch }}&tag={{ build }}&update=true'
+
+- name: Retrieve build number of artifact
+  debug: var=ansible_local.filip_app.section
+  tags: build
+  failed_when: no

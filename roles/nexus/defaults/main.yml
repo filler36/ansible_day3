@@ -1,0 +1,4 @@
+---
+# defaults file for nexus
+
+exec_user_nexus: "{{ nexus_username }}"

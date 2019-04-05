@@ -11,4 +11,11 @@
     name: nginx
     state: present
 
+- name: Nginx version
+  become: yes
+  shell: |
+   echo "[section]" > /etc/ansible/facts.d/nginx.fact
+   nginx -v 2>> /etc/ansible/facts.d/nginx.fact
+  changed_when: no
+
 - import_tasks: configuration.yml

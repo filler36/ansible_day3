@@ -1,7 +1,15 @@
 ---
 # tasks file for java
 
-- name: INSTALL JAVA
+- name: Install java
   yum:
     name: "java-{{ jdk_version }}-openjdk"
     state: present
+
+- name: Java version fact
+  become: yes
+  shell: |
+   printf "[section]\nJava_version=" > /etc/ansible/facts.d/java.fact
+   java -version 2>&1 | grep version | awk '{print $3}' | sed 's/"//g' >> /etc/ansible/facts.d/java.fact
+   sed -i ':a;2N;s/\n//g' /etc/ansible/facts.d/java.fact
+  changed_when: no

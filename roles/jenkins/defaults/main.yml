@@ -1,0 +1,4 @@
+---
+# defaults file for jenkins
+
+exec_user_jenkins: "{{ jenkins_username }}"

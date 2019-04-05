@@ -13,7 +13,7 @@
   become: yes
   get_url:
     url: https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-6.7.6.zip
-    dest: /home/sonar
+    dest: /home/sonar/sonarqube-6.7.6.zip
     mode: 0666
 
 - name: Unarchive a file that is already on the remote machine
@@ -39,4 +39,11 @@
   shell: /opt/sonarqube-6.7.6/bin/linux-x86-64/sonar.sh start
   failed_when: no
   changed_when: no
- 
+
+- name: Sonar version
+  become: yes
+  shell: |
+   printf "[section]\nSonar_version=" > /etc/ansible/facts.d/sonar.fact
+   cat /opt/sonarqube* 2>&1 | awk '{print $2}'| sed 's/\/opt\/sonarqube-//' >> /etc/ansible/facts.d/sonar.fact
+   sed -i ':a;2N;s/\n//g' /etc/ansible/facts.d/sonar.fact
+  changed_when: no

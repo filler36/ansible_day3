@@ -10,11 +10,30 @@
     - tomcat-admin-webapps 
     state: present
 
+- name: Copy users.xml
+  become: yes
+  copy:
+    src: tomcat-users.xml
+    dest: /etc/tomcat/tomcat-users.xml
+    owner: tomcat
+    group: tomcat
+
 - name: Start tomcat
   become: yes
   systemd:
     name: tomcat
     state: started
+
+- name: Tomcat version fact
+  become: yes
+  shell: |
+   printf "[section]\nTomcat_version=" > /etc/ansible/facts.d/tomcat.fact
+   tomcat version | grep number | awk '{print $3}' >> /etc/ansible/facts.d/tomcat.fact
+   sed -i ':a;2N;s/\n//g' /etc/ansible/facts.d/tomcat.fact
+  changed_when: no
+
+- import_tasks: deploy.yml
+
 
 
 

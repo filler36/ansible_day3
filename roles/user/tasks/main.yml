@@ -1,25 +1,19 @@
 ---
 # tasks file for user
 
-- name: INCLUDE VARS
+- name: Include vars
   include_vars: users.yml
 
-- name: TEST
-  debug: msg={{ users.devops }}
-  tags: never
-
-- name: CREATE USER
+- name: Create user
   become: yes
   user:
     name: "{{ username }}"
     password: "{{ users[username].password }}"
     uid: "{{ users[username].uid }}"
     
-- name: ADD TO SUDOERS
+- name: Add to sudoers
   become: yes
   template:
     src: sudoers.j2
     dest: /etc/sudoers.d/{{ username }}
   when:  users[username].privileges is defined
-
-

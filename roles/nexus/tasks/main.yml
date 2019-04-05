@@ -3,9 +3,9 @@
 
 - name: Copy nexus.service
   become: yes
-  copy:
-    src: nexus.service
-    dest: /etc/systemd/system/
+  template:
+    src: nexus.service.j2
+    dest: /etc/systemd/system/nexus.service
     owner: root
     group: root
     mode: 0644
@@ -24,12 +24,10 @@
 #    dest: /home/nexus
 #    mode: 0666
 
-- name: check /opt/nexus
+- name: Check /opt/nexus
   stat:
     path: /opt/nexus
   register: result
-
-
 
 - name: Unarchive nexus
   become: yes
@@ -65,6 +63,15 @@
     enabled: yes
     state: started
     name: nexus
+
+- name: Nexus version fact
+  become: yes
+  shell: |
+   printf "[section]\nNexus_version=" > /etc/ansible/facts.d/nexus.fact
+   curl --include --silent http://localhost:8081 | grep Server | awk {'print $2'} >> /etc/ansible/facts.d/nexus.fact
+   sed -i ':a;2N;s/\n//g' /etc/ansible/facts.d/nexus.fact
+  changed_when: no
+
 
 
 #openssl passwd -salt <salt> -1 <plaintext>
