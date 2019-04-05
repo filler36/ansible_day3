@@ -3,6 +3,7 @@
 **CREATED BY FILIP CHKHAIDZE, APRIL 2019**
 
 **TO EXECUTE PLAYBOOK WITHOUT PASSWORD IN FURTHER RUN THE COMMAND BELOW:**
+  
   ansible all -i inventory -m copy -a "src=\~/.ssh/id_rsa.pub dest=~/.ssh/authorized_keys mode=0640" -u vagrant -k
 
 **ROLES DESCRIPTION:**
