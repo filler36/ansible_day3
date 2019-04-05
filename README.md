@@ -6,6 +6,9 @@
   
   ansible all -i inventory -m copy -a "src=\~/.ssh/id_rsa.pub dest=~/.ssh/authorized_keys mode=0640" -u vagrant -k
 
+**TO START PROVISION RUN THE COMMAND BELOW::**
+  ansible-playbook -i inventory -u vagrant playbooks/playbook.yml
+
 **ROLES DESCRIPTION:**
 
   **COMMON.** Common role for all hosts. Creates directory for custom facts. Use this role if you want to provision
@@ -44,9 +47,23 @@
   **SONAR.** This role installs SonarQube Server with PostgreSQL on the managed hosts.
 
   **TOMCAT.** This role installs Tomcat Application Server on the managed hosts.
+  
+  **DEPLOY.** This role allows you to deploy artifact to Tomcat Application Server. To change the build number of artifact just invoke the role with different buildnumber value. Also you can change the url path to your app. Example:
+  
+  - hosts: localhost
+    roles:
+    - { role: deploy, buildnumber: 241, urlpath: sbeliakou }
+**TO REDEPLOY ARTIFACT JUST EXECUTE THE COMMAND BELOW:**
+  ansible-playbook -i inventory -u vagrant playbooks/playbook.yml --tags=deploy -v
 
 **TO RETRIEVE LOCAL FACTS, ENTER THE COMMAND BELOW:**
   ansible-playbook -i inventory -u vagrant playbooks/playbook.yml --tags=never
 
-**TO RETRIEVE LOCAL FACT ABOUT BUILD NUMBER OF DEPLOYED ARTIFACT, ENTER THE COMMAND BELOW:**
-  ansible-playbook -i inventory -u vagrant playbooks/playbook.yml --tags=build
+**TO RETRIEVE LOCAL FACT ABOUT CURRENTLY DEPLOYED ARTIFACT, ENTER THE COMMAND BELOW:**
+  ansible-playbook -i inventory -u vagrant playbooks/playbook.yml --tags=buildnumber
+
+**LIST OF SERVERS:**  
+jenkins 192.168.56.110  
+nexus 192.168.56.111  
+sonar 192.168.56.112  
+tomcat 192.168.56.113  
