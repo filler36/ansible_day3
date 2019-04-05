@@ -50,3 +50,9 @@
 
 **TO RETRIEVE LOCAL FACT ABOUT BUILD NUMBER OF DEPLOYED ARTIFACT, ENTER THE COMMAND BELOW:**
   ansible-playbook -i inventory -u vagrant playbooks/playbook.yml --tags=build
+
+**LIST OF SERVERS:**
+jenkins 192.168.56.110
+nexus 192.168.56.111
+sonar 192.168.56.112
+tomcat 192.168.56.113
