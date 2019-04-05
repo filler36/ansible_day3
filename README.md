@@ -13,9 +13,9 @@
   **USER.** Creates users. Firstly, to create new user add information to vars/users.xml. You need to assign uid and gid.
   Also you can set password and privileges, if needed. Secondly, you need to add <newuser>_username: <newuser>
   to defaults/main. Finally, when invoke a role just specify <newuser>_username: <newuser> as argument. Example:
-  - hosts: jenkins
+  \- hosts: jenkins
     roles:
-    - { role: user, username: "{{ jenkins_username }}" }
+    \- { role: user, username: "{{ jenkins_username }}" }
 
   **JAVA.** Installs Open JDK on the hosts. You can invoke role with explicit argument jdk_version. In other way
   this value of the variable will be set to default from file defaults/main.yml. You can reassign this value too.
