@@ -45,7 +45,11 @@
 
   **TOMCAT.** This role installs Tomcat Application Server on the managed hosts.
   
-  **DEPLOY.** This role allows you to deploy artifact to Tomcat Application Server. To change the build number of artifact just invoke the task 
+  **DEPLOY.** This role allows you to deploy artifact to Tomcat Application Server. To change the build number of artifact just invoke the role with different buildnumber value. Also you can change the url path to your app. Example:
+  
+  - hosts: localhost
+    roles:
+    - { role: deploy, buildnumber: 241, urlpath: sbeliakou }
 
 **TO RETRIEVE LOCAL FACTS, ENTER THE COMMAND BELOW:**
   ansible-playbook -i inventory -u vagrant playbooks/playbook.yml --tags=never
