@@ -6,6 +6,9 @@
   
   ansible all -i inventory -m copy -a "src=\~/.ssh/id_rsa.pub dest=~/.ssh/authorized_keys mode=0640" -u vagrant -k
 
+**TO START PROVISION RUN THE COMMAND BELOW::**
+  ansible-playbook -i inventory -u vagrant playbooks/playbook.yml
+
 **ROLES DESCRIPTION:**
 
   **COMMON.** Common role for all hosts. Creates directory for custom facts. Use this role if you want to provision
