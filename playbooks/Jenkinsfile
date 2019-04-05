@@ -1,0 +1,103 @@
+def BRANCH = "fchkhaidze"
+def stagevar = ''
+node {
+    try {
+    stage('1. CHECKOUT GIT') {
+        stagevar = '1. CHECKOUT GIT'
+        checkout([$class: 'GitSCM', branches: [[name: '*/fchkhaidze']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/p191e-module.git']]])
+    }
+
+    stage('2. MAVEN BUILD') {
+        stagevar='2. MAVEN BUILD'
+        withMaven(maven: 'M3', tempBinDir: '') {
+            sh "mvn -f $WORKSPACE/helloworld-ws/pom.xml package"
+            sh "ls -l $WORKSPACE/helloworld-ws/target/"
+            sh ("""sed -i "s/\\<Chkhaidze\\>/& Build number ${env.BUILD_ID}/" $WORKSPACE/helloworld-ws/src/main/webapp/index.html""")
+        }
+    }
+
+    stage('3. SONAR SCANNER') {
+        stagevar = '3. MAVEN BUILD'
+        def scannerHome = tool 'SonarQubeScanner';
+        withSonarQubeEnv {
+            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=fchkhaidze -Dsonar.projectVersion=1.0 -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.java.binaries=helloworld-ws/target/classes -Dsonar.sources=helloworld-ws/src/"
+        }
+    }
+
+    stage('4. PARALLEL EXECUTION') {
+        stagevar = '4. PARALLEL EXECUTION'
+        parallel (
+            "pre-integration" : {
+                withMaven(maven: 'M3', tempBinDir: '') {
+                    sh "mvn -f $WORKSPACE/helloworld-ws/pom.xml pre-integration-test"
+                }
+            },
+            "integration" : {
+                withMaven(maven: 'M3', tempBinDir: '') {
+                    sh "mvn -f $WORKSPACE/helloworld-ws/pom.xml integration-test"
+                }
+            },
+            "post-integration" : {
+                withMaven(maven: 'M3', tempBinDir: '') {
+                    sh "mvn -f $WORKSPACE/helloworld-ws/pom.xml post-integration-test"
+                }
+            }, failFast: false
+        )
+    }
+
+    stage('5. TRIGGER ANOTHER JOB') {
+        stagevar = '5. TRIGGER ANOTHER JOB'
+        build job: 'MNTLAB-chkhaidze-child1-build-job', parameters: [string(name: 'BRANCH', value: 'fchkhaidze')]
+        copyArtifacts fingerprintArtifacts: true, projectName: 'MNTLAB-chkhaidze-child1-build-job', selector: lastSuccessful()
+    }
+
+    stage('6. PUBLISH TO NEXUS') {
+        stagevar = '6. PUBLISH TO NEXUS'
+        sh "tar xvf ${BRANCH}.tar.gz"
+        sh "ls -l $WORKSPACE"
+        sh "tar czfv artifact_${BRANCH}_build${env.BUILD_ID}.tar.gz output.txt Jenkinsfile helloworld-ws/target/helloworld-ws.war"
+        sh "ls -l $WORKSPACE"
+        archiveArtifacts "artifact_${BRANCH}_build${env.BUILD_ID}.tar.gz"
+        step([$class: 'NexusArtifactUploader', artifacts: [[artifactId: "pipeline-${BRANCH}", classifier: '', file: "artifact_${BRANCH}_build${env.BUILD_ID}.tar.gz", type: 'tar.gz']], credentialsId: 'nexus', groupId: "${BRANCH}", nexusUrl: 'nexus-ci.playpit.by', nexusVersion: 'nexus3', protocol: 'http', repository: 'MNT-pipeline-training', version: "${env.BUILD_ID}"])
+    }
+
+    stage('7. APPROVE FOR DEPLOYMENT') {
+        stagevar = '7. APPROVE FOR DEPLOYMENT'
+        timeout(time: 5, unit: 'MINUTES') {
+            input 'DEPLOY TO TOMCAT?'
+        }
+    }
+
+
+    node('Host-Node') {
+    stage('8. ANSIBLE DEPLOY') {
+        stagevar = '8. ANSIBLE DEPLOY'
+        checkout([$class: 'GitSCM', branches: [[name: '*/fchkhaidze']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MNT-Lab/p191e-module.git']]])
+        sh "ls -l $WORKSPACE"
+        ansiblePlaybook( 
+            playbook: 'playbook.yml',
+            inventory: 'inventory',
+            installation: 'ansible-on-host',
+            credentialsId: 'deploy',
+            disableHostKeyChecking: true,
+            limit: 'all',
+            colorized: true,
+            extraVars: [BRANCH:"${BRANCH}", BUILD:"${env.BUILD_ID}"],
+            extras: '-vvv')
+        sh "ls -l $WORKSPACE"
+        sh "ls -lah /tmp/$BRANCH/stable"
+        date = new Date().format( 'dd.MM.yyyy' )
+        time = new Date().format( 'HH:mm:ss' ) 
+        mail bcc: '', body: "${date} in ${time} Jenkins job completed successfully. This is an automatic notification, please do not reply to this message.", cc: '', from: 'jenkins.mntlab@bk.ru', replyTo: '', subject: 'Job completed at jenkins-ci.playpit.by', to: 'filler36@gmail.com'
+    }
+    }
+
+//TRY
+    } 	catch (err) {
+        date = new Date().format( 'dd.MM.yyyy' )
+        time = new Date().format( 'HH:mm:ss' )
+        mail bcc: '', body: "${date} in ${time} Jenkins job failed at stage number ${stagevar}. This is an automatic notification, please do not reply to this message.", cc: '', from: 'jenkins.mntlab@bk.ru', replyTo: '', subject: 'Job failed at jenkins-ci.playpit.by', to: 'filler36@gmail.com'
+        currentBuild.result = 'FAILURE'
+}
+//END
+}

@@ -1,0 +1,29 @@
+- name: create custom facts directory
+  file:
+    path: "/etc/ansible/facts.d"
+    state: "directory"
+
+- name: Using simple bash module 
+  bash-module:
+    buildnumber: "{{ buildnumber }}"
+    urlpath: "{{ urlpath }}"
+  failed_when: no
+
+- name: current artifact build number
+  shell: |
+   cat /etc/ansible/facts.d/filip_app.fact | grep build | sed s/[^0-9]//g > /tmp/currentbuildnumber
+  changed_when: no
+
+- name: Artifact version fact
+  become: yes
+  template:
+    src: filip_app.fact.j2
+    dest: /etc/ansible/facts.d/filip_app.fact
+
+- name: Execute setup module to get latest information
+  setup:
+
+- name: Retrieve build number of artifact
+  debug: var=ansible_local.filip_app
+  tags: buildnumber
+  failed_when: no

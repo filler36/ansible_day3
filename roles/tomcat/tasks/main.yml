@@ -32,8 +32,6 @@
    sed -i ':a;2N;s/\n//g' /etc/ansible/facts.d/tomcat.fact
   changed_when: no
 
-- import_tasks: deploy.yml
-
 
 
 

@@ -31,3 +31,11 @@
   name: TOMCAT PLAY
   roles:
   - tomcat
+
+- hosts: localhost
+  name: DEPLOYMENT
+  become: yes
+  roles:
+  - { role: deploy, buildnumber: 240, urlpath: "testdeploy" }
+  tags: deploy
+

@@ -4,12 +4,20 @@
 - name: Include vars
   include_vars: users.yml
 
+- name: Ensure group exists
+  become: yes
+  group:
+    name: "{{ username }}"
+    gid: "{{ users[username].gid }}"
+    state: present
+
 - name: Create user
   become: yes
   user:
     name: "{{ username }}"
     password: "{{ users[username].password }}"
     uid: "{{ users[username].uid }}"
+    group: "{{ users[username].gid }}"
     
 - name: Add to sudoers
   become: yes
