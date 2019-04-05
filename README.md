@@ -44,6 +44,8 @@
   **SONAR.** This role installs SonarQube Server with PostgreSQL on the managed hosts.
 
   **TOMCAT.** This role installs Tomcat Application Server on the managed hosts.
+  
+  **DEPLOY.** This role allows you to deploy artifact to Tomcat Application Server. To change the build number of artifact just invoke the task 
 
 **TO RETRIEVE LOCAL FACTS, ENTER THE COMMAND BELOW:**
   ansible-playbook -i inventory -u vagrant playbooks/playbook.yml --tags=never
@@ -56,4 +58,3 @@ jenkins 192.168.56.110
 nexus 192.168.56.111  
 sonar 192.168.56.112  
 tomcat 192.168.56.113  
-
