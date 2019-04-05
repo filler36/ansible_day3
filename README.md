@@ -50,6 +50,8 @@
   - hosts: localhost
     roles:
     - { role: deploy, buildnumber: 241, urlpath: sbeliakou }
+**TO REDEPLOY ARTIFACT JUST EXECUTE THE COMMAND BELOW:**
+  ansible-playbook -i inventory -u vagrant playbooks/playbook.yml --tags=deploy -v
 
 **TO RETRIEVE LOCAL FACTS, ENTER THE COMMAND BELOW:**
   ansible-playbook -i inventory -u vagrant playbooks/playbook.yml --tags=never
